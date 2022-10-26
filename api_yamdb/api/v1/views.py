@@ -1,27 +1,26 @@
-from django.conf import settings
-from django.contrib.auth.tokens import default_token_generator
+from .filter import TitleFilter
 from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets, views
 from rest_framework.decorators import action
-from rest_framework.mixins import (DestroyModelMixin, CreateModelMixin,
-                                   ListModelMixin)
 from rest_framework.permissions import (IsAuthenticated, AllowAny,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
-
 from reviews.models import Title, Category, Genre, User, Review
-from .filter import TitleFilter
+from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin,
+                                   ListModelMixin)
+from django.conf import settings
+from django.contrib.auth.tokens import default_token_generator
 from .permissions import (IsAdmin, IsAdminOrReadOnly,
                           IsAuthorOrModeratorOrAdminOrReadOnly)
-from .serializers import (TitleSerializer, CategorySerializer, GenreSerializer,
-                          UsersSerializer, SignupSerializer,
-                          JwtTokenSerializer, ReviewSerializer,
-                          CommentSerializer, TitleReadSerializer)
-
+from .serializers import (CategorySerializer, CommentSerializer,
+                          GenreSerializer, JwtTokenSerializer,
+                          ReviewSerializer, SignupSerializer,
+                          TitleReadSerializer, TitleSerializer,
+                          UsersSerializer)
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all().annotate(
