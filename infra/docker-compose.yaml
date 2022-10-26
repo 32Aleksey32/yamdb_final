@@ -9,7 +9,7 @@ services:
       - ./.env
 
   web:
-    image: aleksey32/yamdb_final:latest
+    image: aleksey32/infra_actions:latest
     restart: always
     depends_on:
       - db
