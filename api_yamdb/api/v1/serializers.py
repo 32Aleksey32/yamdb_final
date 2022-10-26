@@ -1,8 +1,11 @@
 import datetime as dt
+
 from django.core.validators import RegexValidator
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
+
 from reviews.models import Category, Comment, Genre, Review, Title, User
+
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
