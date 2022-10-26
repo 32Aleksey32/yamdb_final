@@ -24,7 +24,6 @@ from .serializers import (CategorySerializer, CommentSerializer,
                           UsersSerializer)
 
 
-
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all().annotate(
         rating=Avg('reviews__score')
