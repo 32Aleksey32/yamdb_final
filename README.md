@@ -2,8 +2,8 @@
 # yamdb-final - спринт №16 в Яндекс.Практикум
 ## Спринт 16 - CI и CD проекта api_yamdb
 
-### ip сервера
-51.250.17.126
+### ip сервера:
+- 51.250.17.126
 
 ### Стек технологий использованный в проекте:
 - Python 3.7
@@ -20,45 +20,78 @@
 - Регистрация на GitHub
 - Выделенный сервер Linux Ubuntu 20.04 с с публичным IP адресом
 
-#### Настройка GitHub Secrets
-Клонируйте репозиторий и настройте переменные GitHub secrets согласно Вашему окружению
-
-- DOCKER_USERNAME   #логин от аккаунта на Docker Hub
-- DOCKER_PASSWORD   #пароль от аккаунта на Docker Hub
-- HOST              #публичный адрес сервера для доступа по SSH
-- USER  
-- SSH_KEY #скопируйте приватный ключ с компьютера, имеющего доступ к боевому серверу: cat ~/.ssh/id_rsa
-- SSH_PASSWORD
-- TELEGRAM_TOKEN #токен вашего бота. Получить этот токен можно у бота @BotFather
-- TELEGRAM_TO #id того кто будет получать сообщение от бота. Узнать свой ID можно у бота @userinfobot
-- DB_ENGINE пример django.db.backends.postgresql
-- DB_NAME #имя образа docker-compose с базой - db
-- DB_POSTGRES_USER
-- DB_POSTGRES_PASSWORD
-- DB_HOST
-- DB_PORT
-
 #### Инструкции для развертывания и запуска приложения
-- Зайдите на сервер
+- Зайдите на удаленный сервер
 - Установите docker 
-```
-sudo apt install docker.io
-```
+  ```bash
+  sudo apt install docker.io
+  ```
 
-- Установиите docker-compose на сервер:
-```
-curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-chmod +x /usr/local/bin/docker-compose
-```
+- Установите docker-compose на сервер:
+  ```bash
+  curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+  chmod +x /usr/local/bin/docker-compose
+  ```
 
 - Остановите службу nginx командой
-```
-sudo systemctl stop nginx
-```
+  ```bash
+  sudo systemctl stop nginx
+  ```
 
-- Скопируйте файлы из директории infra в домашную папку пользователя:
-```
-docker-compose.yaml
-nginx - сохраняя стурктуру и название папок
-```
-  
+- Локально отредактируйте файл infra/nginx.conf, обязательно в строке server_name вписать IP-адрес сервера
+- Скопируйте файлы docker-compose.yml и default.conf из директории infra на сервер, также создав папку nginx:
+  ```bash
+  scp .\infra\docker-compose.yaml <username>@<host>:/home/<username>/docker-compose.yaml
+  scp .\infra\nginx\default.conf <username>@<host>:/home/<username>/nginx/default.conf
+  ```
+- Для работы с Workflow добавитьте в Secrets GitHub переменные окружения для работы:
+  ```
+  - DOCKER_USERNAME=<логин от аккаунта на Docker Hub>
+  - DOCKER_PASSWORD=<пароль от аккаунта на Docker Hub>
+
+  - HOST=<публичный адрес сервера для доступа по SSH>
+  - USER=<username для подключения к серверу> 
+  - SSH_KEY=<ваш SSH ключ (для получения команда: cat ~/.ssh/id_rsa)>
+  - PASSPHRASE=<пароль для сервера, если он установлен>
+
+  - DB_ENGINE=<django.db.backends.postgresql>
+  - DB_NAME=<имя базы данных postgres>
+  - DB_POSTGRES_USER=<пользователь бд>
+  - DB_POSTGRES_PASSWORD=<пароль>
+  - DB_HOST=<db>
+  - DB_PORT=<5432>
+
+  - TELEGRAM_TOKEN=<токен вашего бота>. Получить этот токен можно у бота @BotFather
+  - TELEGRAM_TO=<ID чата, в который придет сообщение>. Узнать свой ID можно у бота @userinfobot
+  ```
+  Workflow состоит из четырёх шагов:
+    - Проверка кода на соответствие PEP8
+    - Сборка и публикация образа бекенда на DockerHub.
+    - Автоматический деплой на удаленный сервер.
+    - Отправка уведомления в телеграм-чат.
+     
+- Соберите и запустите контейнеры на сервере:
+  ```bash
+  docker-compose up -d --build
+  ```
+- После успешной сборки выполните следующие действия (только при первом деплое):
+    * проведите миграции внутри контейнеров:
+      ```bash
+      docker-compose exec web python manage.py makemigrations reviews
+      docker-compose exec web python manage.py migrate
+      ```
+    * соберите статику проекта:
+      ```bash
+      docker-compose exec web python manage.py collectstatic --no-input
+      ```  
+    * Создайте суперпользователя Django, после запроса от терминала введите логин и пароль для суперпользователя:
+      ```bash
+      docker-compose exec web python manage.py createsuperuser
+      ```
+
+### Команды для заполнения базы данными
+- Заполните базу данными
+- Создайте резервную копию данных:
+  ```bash
+  docker-compose exec web python manage.py dumpdata > fixtures.json
+  ```
