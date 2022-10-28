@@ -52,7 +52,7 @@ jobs:
           with:
             push: true
             tags: aleksey32/yamdb_final:latest
-            file: api_yamdb/Dockerfile
+
 
   deploy:
     runs-on: ubuntu-latest
