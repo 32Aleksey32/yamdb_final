@@ -53,9 +53,10 @@ jobs:
           # Пуш образа в Docker Hub
           uses: docker/build-push-action@v2
           with:
-            context: ./api_yamdb/
+            # context: ./api_yamdb/
             push: true
             tags: aleksey32/yamdb_final:latest
+            file: api_yamdb/Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
