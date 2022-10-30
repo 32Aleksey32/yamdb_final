@@ -11,6 +11,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = [
     '84.201.165.7',
+    'osipov32.ddns.net'
     'localhost',
     '127.0.0.1',
 ]
