@@ -14,6 +14,7 @@ ALLOWED_HOSTS = [
     'osipov32.ddns.net'
     'localhost',
     '127.0.0.1',
+    'web'
 ]
 
 INSTALLED_APPS = [
