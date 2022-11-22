@@ -47,7 +47,7 @@
   scp .\infra\docker-compose.yaml <username>@<host>:/home/<username>/docker-compose.yaml
   scp .\infra\nginx\default.conf <username>@<host>:/home/<username>/nginx/default.conf
   ```
-- Для работы с Workflow добавитьте в Secrets GitHub переменные окружения для работы:
+- Для работы с Workflow добавьте в Secrets GitHub переменные окружения для работы:
   ```
   - DOCKER_USERNAME=<логин от аккаунта на Docker Hub>
   - DOCKER_PASSWORD=<пароль от аккаунта на Docker Hub>
