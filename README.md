@@ -41,7 +41,7 @@
   sudo systemctl stop nginx
   ```
 
-- Локально отредактируйте файл infra/nginx.conf, обязательно в строке server_name вписать IP-адрес сервера
+- Локально отредактируйте файл infra/nginx/default.conf, обязательно в строке server_name вписать IP-адрес сервера
 - Скопируйте файлы docker-compose.yml и default.conf из директории infra на сервер, также создав папку nginx:
   ```bash
   scp .\infra\docker-compose.yaml <username>@<host>:/home/<username>/docker-compose.yaml
